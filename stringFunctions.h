@@ -6,9 +6,9 @@
 #define TXT 1024
 #define WORD 30
 
-void gematria(char[TXT], char[WORD], char[TXT]);
-void atbash(char[TXT], char[WORD], char[TXT]);
-void anagram(char[TXT], char[WORD], char[TXT]);
+void gematria(char[TXT], char[WORD]);
+void atbash(char[TXT], char[WORD]);
+void anagram(char[TXT], char[WORD]);
 
 
 

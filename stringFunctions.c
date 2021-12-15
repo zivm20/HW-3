@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "stringFunctions.h"
 
@@ -21,12 +22,16 @@ int getNumerology(char word[WORD]){
   return sum;
 }
 
-void gematria(char text[TXT], char word[WORD], char outText[TXT]){
+void gematria(char text[TXT], char word[WORD]){
   int wordValue = getNumerology(word);
   int textIdx = 0;
   int outIdx = 0;
-  while(text[textIdx] < strlen(text)){
-    char minSeq[strlen(text)];
+
+  char *minSeq;
+  char *outText;
+  outText = (char *)calloc(strlen(text),sizeof(char));
+  while(textIdx < strlen(text)){
+    minSeq = (char *)calloc(strlen(text),sizeof(char));
     int minSeqIdx = 0;
     int seqValue = 0;
     //try to form a sequance only if the current character in the text is a letter
@@ -35,8 +40,9 @@ void gematria(char text[TXT], char word[WORD], char outText[TXT]){
         minSeq[minSeqIdx] = text[textIdx+minSeqIdx];
         seqValue += getCharValue(text[textIdx+minSeqIdx]);
         minSeqIdx++;
-      }while(seqValue < wordValue && text[textIdx+minSeqIdx] < strlen(text));
+      }while(seqValue < wordValue && textIdx+minSeqIdx < strlen(text));
     }
+
     if(seqValue == wordValue){
       //add  ~ character before each new sequance
       if(outIdx > 0){
@@ -52,13 +58,17 @@ void gematria(char text[TXT], char word[WORD], char outText[TXT]){
       }
     }
     textIdx++;
+    free(minSeq);
   }
+  printf("Gematria Sequences: %s\n",outText);
+  free(outText);
 }
 
 
-void atbash(char text[TXT], char word[WORD], char outText[TXT]){
+void atbash(char text[TXT], char word[WORD]){
   //make the new word we are looking for
-  char newWord[strlen(word)];
+  char *newWord;
+  newWord = (char *)calloc(strlen(word),sizeof(char));
   for(int i =0; i<strlen(word); i++){
     char newChar = word[i];
     if(word[i] >= 'a' && word[i] <= 'z'){
@@ -70,21 +80,24 @@ void atbash(char text[TXT], char word[WORD], char outText[TXT]){
     newWord[i] = newChar;
   }
 
-
   int textIdx = 0;
   int outIdx = 0;
-  while(text[textIdx] < strlen(text)){
+  char *minSeq;
+  char *outText;
+  outText = (char *)calloc(strlen(text),sizeof(char));
+
+  while(textIdx < strlen(text)){
+    minSeq = (char *)calloc(strlen(text),sizeof(char));
     if(text[textIdx] != ' ' && text[textIdx] != '\n' && text[textIdx] != '\t'){
-      char minSeq[strlen(text)];
       int charCount = 0;
       int minSeqIdx = 0;
       //generate all min sequances so that in each min sequance there are strlen(newWord) non empty characters
-      while(charCount < strlen(newWord) && text[textIdx+minSeqIdx] < strlen(text)){
+      while(charCount < strlen(newWord) && textIdx+minSeqIdx < strlen(text)){
         minSeq[minSeqIdx] = text[textIdx+minSeqIdx];
-        minSeqIdx++;
         if(text[textIdx+minSeqIdx] != ' ' && text[textIdx+minSeqIdx] != '\n' && text[textIdx+minSeqIdx] != '\t'){
           charCount++;
         }
+        minSeqIdx++;
       }
 
       //validate word made
@@ -104,12 +117,14 @@ void atbash(char text[TXT], char word[WORD], char outText[TXT]){
         }
         //check if the min sequance contains the new word in reversed order
         if(valid == false){
+          minSeqIdx = 0;
           charCount = strlen(newWord)-1;
           valid = true;
+
           while(charCount >= 0 && valid == true){
             if(minSeq[minSeqIdx] != ' ' && minSeq[minSeqIdx] != '\n' && minSeq[minSeqIdx] != '\t'){
               if(minSeq[minSeqIdx] != newWord[charCount]){
-                valid = 0;
+                valid = false;
               }
               charCount--;
             }
@@ -119,6 +134,7 @@ void atbash(char text[TXT], char word[WORD], char outText[TXT]){
 
         //add new min sequance
         if(valid == true){
+
           if(outIdx > 0){
             outText[outIdx] = '~';
             outIdx++;
@@ -133,36 +149,46 @@ void atbash(char text[TXT], char word[WORD], char outText[TXT]){
       }
     }
     textIdx++;
-
-
+    free(minSeq);
   }
-
-
+  printf("Atbash Sequences: %s\n",outText);
+  free(outText);
+  free(newWord);
 
 }
 
-void anagram(char text[TXT], char word[WORD], char outText[TXT]){
+void anagram(char text[TXT], char word[WORD]){
   int textIdx = 0;
   int outIdx = 0;
-  while(text[textIdx] < strlen(text)){
+  char *minSeq;
+  char *outText;
+  outText = (char *)calloc(strlen(text),sizeof(char));
+  while(textIdx< strlen(text)){
+    minSeq = (char *)calloc(strlen(text),sizeof(char));
+
     if(text[textIdx] != ' ' && text[textIdx] != '\n' && text[textIdx] != '\t'){
-      char minSeq[strlen(text)];
       int charCount = 0;
       int minSeqIdx = 0;
+
       //generate all min sequances so that in each min sequance there are strlen(word) non empty characters
-      while(charCount < strlen(word) && text[textIdx+minSeqIdx] < strlen(text)){
+      while(charCount < strlen(word) && textIdx+minSeqIdx < strlen(text)){
         minSeq[minSeqIdx] = text[textIdx+minSeqIdx];
-        minSeqIdx++;
+
         if(text[textIdx+minSeqIdx] != ' ' && text[textIdx+minSeqIdx] != '\n' && text[textIdx+minSeqIdx] != '\t'){
           charCount++;
         }
+        minSeqIdx++;
       }
+
       //validate word made
       int valid = true;
       if(charCount == strlen(word)){
-        char newWord[strlen(word)];
-        for(int i =0; i<strlen(word); i++){
+        char *newWord;
+        newWord = (char *)calloc(strlen(word),sizeof(char));
+        for(int i = 0; i<strlen(word); i++){
           newWord[i] = word[i];
+
+
         }
         charCount = 0;
         minSeqIdx = 0;
@@ -187,6 +213,7 @@ void anagram(char text[TXT], char word[WORD], char outText[TXT]){
 
         //add new min sequance
         if(valid == true){
+
           if(outIdx > 0){
             outText[outIdx] = '~';
             outIdx++;
@@ -198,8 +225,14 @@ void anagram(char text[TXT], char word[WORD], char outText[TXT]){
             minSeqIdx++;
           }
         }
+
+        free(newWord);
       }
     }
     textIdx++;
+    free(minSeq);
   }
+
+  printf("Anagram Sequences: %s\n",outText);
+  free(outText);
 }

@@ -1,0 +1,4 @@
+testing/*
+*.o
+*.so
+stringProg
