@@ -60,7 +60,7 @@ void gematria(char text[TXT], char word[WORD]){
     textIdx++;
     free(minSeq);
   }
-  printf("Gematria Sequences: %s\n",outText);
+  printf("Gematria Sequences: %s",outText);
   free(outText);
 }
 
@@ -151,7 +151,7 @@ void atbash(char text[TXT], char word[WORD]){
     textIdx++;
     free(minSeq);
   }
-  printf("Atbash Sequences: %s\n",outText);
+  printf("Atbash Sequences: %s",outText);
   free(outText);
   free(newWord);
 
@@ -233,6 +233,6 @@ void anagram(char text[TXT], char word[WORD]){
     free(minSeq);
   }
 
-  printf("Anagram Sequences: %s\n",outText);
+  printf("Anagram Sequences: %s",outText);
   free(outText);
 }

@@ -23,7 +23,9 @@ int main(){
 
 
   gematria(text,word);
+  printf("\n");
   atbash(text,word);
+  printf("\n");
   anagram(text,word);
 
 
